@@ -19,6 +19,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(UserCreateRequest request) {
+
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new RuntimeException("Username already exists");
+        }
+
         User user = User.builder()
                 .username(request.getUsername())
                 .password(request.getPassword())
