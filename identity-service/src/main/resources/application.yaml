@@ -1,0 +1,16 @@
+#server:
+#  port: 8888
+#spring:
+#  config:
+#    activate:
+#      on-profile: dev
+#  datasource:
+#    url: ${POSTGRES_URL:jdbc:postgresql://localhost:5432/PortalAdmin}
+#    username: ${POSTGRES_USER:postgres}
+#    password: ${POSTGRES_PASSWORD:123}
+#  jpa:
+#    show-sql: false
+#    hibernate:
+#      ddl-auto: update
+#  main:
+#    banner-mode: off
