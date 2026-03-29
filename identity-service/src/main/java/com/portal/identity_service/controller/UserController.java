@@ -1,8 +1,7 @@
 package com.portal.identity_service.controller;
 
-import com.portal.identity_service.dto.request.UserCreateRequest;
-import com.portal.identity_service.dto.request.UserUpdateRequest;
-import com.portal.identity_service.dto.response.ResponseData;
+import com.portal.identity_service.dto.request.*;
+import com.portal.identity_service.dto.response.ApiResponse;
 import com.portal.identity_service.entity.User;
 import com.portal.identity_service.service.UserService;
 import lombok.AccessLevel;
@@ -26,59 +25,55 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseData<String> addUser(@Valid @RequestBody UserCreateRequest request){
+    public ApiResponse<String> addUser(@Valid @RequestBody UserCreateRequest request){
         log.info("Request add user = {}: ", request.getUsername());
-        try {
             userService.createUser(request);
-            return new ResponseData<>(HttpStatus.CREATED.value(), "user.add.success", "User created successfully");
-        } catch (Exception e) {
-            return new ResponseData<>(HttpStatus.BAD_REQUEST.value(), "user.add.fail", "Add user fail");
-        }
+            return new ApiResponse<>(HttpStatus.CREATED.value(), "user.add.success", "User created successfully");
     }
 
     @GetMapping("getAll")
-    public ResponseData<List<User>> getUser(){
+    public ApiResponse<List<User>> getUser(){
         try {
             List<User> users = userService.getAllUsers();
             log.info("Get all users successfully, total={}", users.size());
 
-            return new ResponseData<>(
+            return new ApiResponse<>(
                     HttpStatus.OK.value(),
                     "Get users successfully",
                     users
             );
         } catch (Exception e) {
-            return new ResponseData<>(HttpStatus.BAD_REQUEST.value(), "user.get.fail");
+            return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "user.get.fail");
         }
     }
 
     @GetMapping("/{id}")
-    public ResponseData<User> getUserById(@PathVariable Long id){
+    public ApiResponse<User> getUserById(@PathVariable Long id){
         try {
             User user = userService.getUserById(id);
-            return new ResponseData<>(HttpStatus.OK.value(), "user.getById.success", user);
+            return new ApiResponse<>(HttpStatus.OK.value(), "user.getById.success", user);
         } catch (Exception e) {
-            return new ResponseData<>(HttpStatus.BAD_REQUEST.value(), "user.getById.fail");
+            return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "user.getById.fail");
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseData<User> updateUser(@PathVariable Long id, @Valid @RequestBody UserUpdateRequest request){
+    public ApiResponse<User> updateUser(@PathVariable Long id, @Valid @RequestBody UserUpdateRequest request){
         try {
             User updatedUser = userService.userUpdate(id, request);
-            return new ResponseData<>(HttpStatus.OK.value(), "user.update.success", updatedUser);
+            return new ApiResponse<>(HttpStatus.OK.value(), "user.update.success", updatedUser);
         } catch (Exception e) {
-            return new ResponseData<>(HttpStatus.BAD_REQUEST.value(), "user.update.fail");
+            return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "user.update.fail");
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseData<String> deleteUser(@PathVariable Long id){
+    public ApiResponse<String> deleteUser(@PathVariable Long id){
         try {
             userService.deleteUser(id);
-            return new ResponseData<>(HttpStatus.OK.value(), "user.delete.success", "User deleted successfully");
+            return new ApiResponse<>(HttpStatus.OK.value(), "user.delete.success", "User deleted successfully");
         } catch (Exception e) {
-            return new ResponseData<>(HttpStatus.BAD_REQUEST.value(), "user.delete.fail", "Delete user fail");
+            return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "user.delete.fail", "Delete user fail");
         }
     }
 

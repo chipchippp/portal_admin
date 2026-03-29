@@ -3,6 +3,8 @@ package com.portal.identity_service.service.impl;
 import com.portal.identity_service.dto.request.UserCreateRequest;
 import com.portal.identity_service.dto.request.UserUpdateRequest;
 import com.portal.identity_service.entity.User;
+import com.portal.identity_service.excetion.AppException;
+import com.portal.identity_service.excetion.ErrorCode;
 import com.portal.identity_service.repository.UserRepository;
 import com.portal.identity_service.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +23,7 @@ public class UserServiceImpl implements UserService {
     public User createUser(UserCreateRequest request) {
 
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("Username already exists");
+            throw new AppException(ErrorCode.USER_EXISTED);
         }
 
         User user = User.builder()
