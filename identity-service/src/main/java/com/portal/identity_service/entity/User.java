@@ -2,6 +2,7 @@ package com.portal.identity_service.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 
@@ -12,17 +13,18 @@ import java.time.LocalDate;
 @Builder
 @Entity
 @Table(name = "users")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    private String username;
-    private String password;
-    private String fullName;
-    private String email;
-    private String phoneNumber;
-    private String gender;
-    private String status;
-    private LocalDate dateOfBirth;
+     long id;
+     String username;
+     String password;
+     String fullName;
+     String email;
+     String phoneNumber;
+     String gender;
+     String status;
+     LocalDate dateOfBirth;
 
 }

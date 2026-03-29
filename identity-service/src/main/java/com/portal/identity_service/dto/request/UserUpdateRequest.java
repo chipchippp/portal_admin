@@ -1,18 +1,21 @@
 package com.portal.identity_service.dto.request;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 
-@Getter
-@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+@Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserUpdateRequest {
-    private String password;
-    private String fullName;
-    private String email;
-    private String phoneNumber;
-    private String gender;
-    private String status;
-    private LocalDate dateOfBirth;
+     String password;
+     String fullName;
+     String email;
+     String phoneNumber;
+     String gender;
+     String status;
+     LocalDate dateOfBirth;
 }

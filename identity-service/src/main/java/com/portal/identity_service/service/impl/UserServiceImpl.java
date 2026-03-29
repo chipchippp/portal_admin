@@ -2,12 +2,15 @@ package com.portal.identity_service.service.impl;
 
 import com.portal.identity_service.dto.request.UserCreateRequest;
 import com.portal.identity_service.dto.request.UserUpdateRequest;
+import com.portal.identity_service.dto.response.UserResponse;
 import com.portal.identity_service.entity.User;
-import com.portal.identity_service.excetion.AppException;
-import com.portal.identity_service.excetion.ErrorCode;
+import com.portal.identity_service.excetion.*;
+import com.portal.identity_service.mapper.UserMapper;
 import com.portal.identity_service.repository.UserRepository;
 import com.portal.identity_service.service.UserService;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -16,57 +19,48 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 @Service
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserServiceImpl implements UserService {
-    private final UserRepository userRepository;
+    UserRepository userRepository;
+    UserMapper userMapper;
 
     @Override
     public User createUser(UserCreateRequest request) {
-
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
+        User user = userMapper.toUser(request);
 
-        User user = User.builder()
-                .username(request.getUsername())
-                .password(request.getPassword())
-                .fullName(request.getFullName())
-                .email(request.getEmail())
-                .phoneNumber(request.getPhoneNumber())
-                .gender(request.getGender())
-                .dateOfBirth(request.getDateOfBirth())
-                .status(request.getStatus())
-                .build();
         return userRepository.save(user);
     }
 
     @Override
-    public User userUpdate(Long id, UserUpdateRequest request) {
-        User user = getUserById(id);
-        user.setPassword(request.getPassword());
-        user.setFullName(request.getFullName());
-        user.setEmail(request.getEmail());
-        user.setPhoneNumber(request.getPhoneNumber());
-        user.setGender(request.getGender());
-        user.setStatus(request.getStatus());
-        user.setDateOfBirth(request.getDateOfBirth());
-        return userRepository.save(user);
+    public UserResponse userUpdate(Long id, UserUpdateRequest request) {
+        User user = getUserEntityById(id);
+        userMapper.updateUserFromRequest(user, request);
+        return userMapper.toUserResponse(userRepository.save(user));
     }
 
     @Override
     public void deleteUser(Long id) {
-        User user = getUserById(id);
+        User user = getUserEntityById(id);
         userRepository.delete(user);
     }
 
     @Override
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserResponse> getAllUsers() {
+        return userMapper.toUserResponse(userRepository.findAll());
     }
 
+
     @Override
-    public User getUserById(Long id) {
+    public UserResponse getUserById(Long id) {
+        return userMapper.toUserResponse(getUserEntityById(id));
+    }
+
+    private User getUserEntityById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow((() -> new RuntimeException("User not found")));
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
 }

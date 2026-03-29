@@ -2,17 +2,19 @@ package com.portal.identity_service.dto.response;
 
 import com.fasterxml.jackson.annotation.*;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @JsonPropertyOrder({ "status", "message", "data" })
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ApiResponse<T>{
-    private int status;
-    private String message;
+     int status;
+     String message;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private T data;
+     T data;
 
     public ApiResponse(int status, String message) {
     }
