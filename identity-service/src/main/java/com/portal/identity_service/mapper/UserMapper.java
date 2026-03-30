@@ -15,9 +15,9 @@ public interface UserMapper {
 
     User toUser(UserCreateRequest request);
 
-    @Mapping(target = "status", ignore = true) // Tránh ánh xạ trường "status" từ UserUpdateRequest sang User
+    @Mapping(target = "password", ignore = true) // Tránh ánh xạ trường "status" từ UserUpdateRequest sang User
     UserResponse toUserResponse(User user);
 
-    List<UserResponse> toUserResponse(List<User> users);
+    List<UserResponse> toUserResponseList(List<User> users);
     void updateUserFromRequest(@MappingTarget User user, UserUpdateRequest request);
 }

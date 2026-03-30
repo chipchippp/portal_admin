@@ -8,7 +8,7 @@ import com.portal.identity_service.entity.User;
 import java.util.List;
 
 public interface  UserService {
-    User createUser(UserCreateRequest request);
+    UserResponse createUser(UserCreateRequest request);
     List<UserResponse> getAllUsers();
     UserResponse getUserById(Long id);
     UserResponse userUpdate(Long id, UserUpdateRequest request);

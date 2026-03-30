@@ -1,7 +1,13 @@
 package com.portal.identity_service.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.portal.identity_service.enums.Gender;
+import com.portal.identity_service.enums.Status;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.time.LocalDate;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -9,13 +15,16 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserResponse {
-      String id;
+      Long id;
       String username;
       String fullName;
       String email;
       String phoneNumber;
-      String gender;
-      String status;
-      String dateOfBirth;
+      @JsonIgnore
+      String password;
+      Gender gender;
+      Status status;
+      @JsonFormat(pattern = "yyyy-MM-dd")
+      LocalDate dateOfBirth;
 
 }

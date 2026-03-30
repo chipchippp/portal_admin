@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 @JsonPropertyOrder({ "status", "message", "data" })
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -17,5 +18,7 @@ public class ApiResponse<T>{
      T data;
 
     public ApiResponse(int status, String message) {
+        this.status = status;
+        this.message = message;
     }
 }
