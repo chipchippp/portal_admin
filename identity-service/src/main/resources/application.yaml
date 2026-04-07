@@ -1,16 +1,35 @@
-#server:
-#  port: 8888
-#spring:
-#  config:
-#    activate:
-#      on-profile: dev
-#  datasource:
-#    url: ${POSTGRES_URL:jdbc:postgresql://localhost:5432/PortalAdmin}
-#    username: ${POSTGRES_USER:postgres}
-#    password: ${POSTGRES_PASSWORD:123}
-#  jpa:
-#    show-sql: false
-#    hibernate:
-#      ddl-auto: update
-#  main:
-#    banner-mode: off
+spring:
+  application:
+    name: identity-service
+
+  datasource:
+    url: ${POSTGRES_URL:jdbc:postgresql://localhost:5432/PortalAdmin}
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:123}
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  main:
+    banner-mode: off
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+server:
+  port: 8888
+
+logging:
+  level:
+    root: warn
+    org.springframework.security: DEBUG
+
+jwt:
+  signer-key: "dbb7962ca1a69376e6ba22aac28b3b7c73e58876b1588ebe227bdc7d405f0414"

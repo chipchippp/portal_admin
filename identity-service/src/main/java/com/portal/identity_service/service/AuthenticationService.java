@@ -1,8 +1,14 @@
 package com.portal.identity_service.service;
 
+import com.nimbusds.jose.JOSEException;
 import com.portal.identity_service.dto.request.AuthenticationRequest;
-import com.portal.identity_service.repository.UserRepository;
+import com.portal.identity_service.dto.request.IntrospectRequest;
+import com.portal.identity_service.dto.response.AuthenticationResponse;
+import com.portal.identity_service.dto.response.IntrospectResponse;
+
+import java.text.ParseException;
 
 public interface AuthenticationService {
-    boolean authenticate(AuthenticationRequest request);
+    AuthenticationResponse authenticate(AuthenticationRequest request);
+    IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException;
 }
