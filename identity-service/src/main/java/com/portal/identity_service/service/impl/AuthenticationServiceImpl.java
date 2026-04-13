@@ -83,7 +83,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .issuer("loc.com")
                 .issueTime(new Date())
                 .expirationTime(new Date(
-                        Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()))
+                        Instant.now().plus(1, ChronoUnit.MINUTES).toEpochMilli()))
                 .claim("userId", "Custom")
                 .build();
 
