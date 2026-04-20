@@ -7,6 +7,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Getter
 @Data
@@ -30,5 +31,6 @@ public class User {
      @Enumerated(EnumType.STRING)
      Status status;
      LocalDate dateOfBirth;
+     Set<String> roles;
 
 }

@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
@@ -21,7 +22,7 @@ import java.util.List;
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/user")
+@RequestMapping("/api/v1/users")
 public class UserController {
     UserService userService;
 
@@ -32,8 +33,13 @@ public class UserController {
             return new ApiResponse<>(HttpStatus.CREATED.value(), "user.add.success", "User created successfully");
     }
 
+
     @GetMapping("getAll")
     public ApiResponse<List<UserResponse>> getUser(){
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        log.warn("Username = {}: ", authentication.getName());
+        authentication.getAuthorities().forEach(authority -> log.warn("Authority = {}: ", authority.getAuthority()));
+
         try {
             List<UserResponse> users = userService.getAllUsers();
             return new ApiResponse<>(HttpStatus.OK.value(), "Get users successfully", users);

@@ -4,6 +4,7 @@ import com.portal.identity_service.dto.request.UserCreateRequest;
 import com.portal.identity_service.dto.request.UserUpdateRequest;
 import com.portal.identity_service.dto.response.UserResponse;
 import com.portal.identity_service.entity.User;
+import com.portal.identity_service.enums.Role;
 import com.portal.identity_service.excetion.*;
 import com.portal.identity_service.mapper.UserMapper;
 import com.portal.identity_service.repository.UserRepository;
@@ -16,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -25,6 +27,7 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     UserRepository userRepository;
     UserMapper userMapper;
+    PasswordEncoder passwordEncoder;
 
     @Override
     public UserResponse createUser(UserCreateRequest request) {
@@ -32,8 +35,11 @@ public class UserServiceImpl implements UserService {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
         User user = userMapper.toUser(request);
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(9);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        HashSet<String> roles = new HashSet<>();
+        roles.add(Role.USER.name());
+        user.setRoles(roles);
 
         return userMapper.toUserResponse(userRepository.save(user));
     }

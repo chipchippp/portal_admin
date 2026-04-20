@@ -8,6 +8,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,5 +27,6 @@ public class UserResponse {
       Status status;
       @JsonFormat(pattern = "yyyy-MM-dd")
       LocalDate dateOfBirth;
+      Set<String> roles;
 
 }

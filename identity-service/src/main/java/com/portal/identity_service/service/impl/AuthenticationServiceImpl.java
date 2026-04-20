@@ -1,32 +1,29 @@
 package com.portal.identity_service.service.impl;
 
 import com.nimbusds.jose.*;
-import com.nimbusds.jose.crypto.MACSigner;
-import com.nimbusds.jose.crypto.MACVerifier;
+import com.nimbusds.jose.crypto.*;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import com.portal.identity_service.dto.request.AuthenticationRequest;
-import com.portal.identity_service.dto.request.IntrospectRequest;
-import com.portal.identity_service.dto.response.AuthenticationResponse;
-import com.portal.identity_service.dto.response.IntrospectResponse;
-import com.portal.identity_service.excetion.AppException;
-import com.portal.identity_service.excetion.ErrorCode;
+import com.portal.identity_service.dto.request.*;
+import com.portal.identity_service.dto.response.*;
+import com.portal.identity_service.entity.User;
+import com.portal.identity_service.excetion.*;
 import com.portal.identity_service.repository.UserRepository;
 import com.portal.identity_service.service.AuthenticationService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import lombok.experimental.NonFinal;
+import lombok.experimental.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import org.springframework.util.CollectionUtils;
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.StringJoiner;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -52,7 +49,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
 
-        var token = generateAccessToken(request.getUsername());
+        var token = generateAccessToken(user);
         return AuthenticationResponse.builder()
                 .accessToken(token)
                 .authenticated(true)
@@ -75,16 +72,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .build();
     }
 
-    private String generateAccessToken(String username) {
+    private String generateAccessToken(User user) {
         JWSHeader jwsHeader = new JWSHeader(JWSAlgorithm.HS512);
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-                .subject(username)
+                .subject(user.getUsername())
                 .issuer("loc.com")
                 .issueTime(new Date())
                 .expirationTime(new Date(
                         Instant.now().plus(1, ChronoUnit.MINUTES).toEpochMilli()))
-                .claim("userId", "Custom")
+                .claim("scope", buildScope(user))
                 .build();
 
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
@@ -98,5 +95,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             log.error("Can't create token: {}", e.getMessage());
             throw new RuntimeException(e);
         }
+    }
+
+    private String buildScope(User user) {
+        StringJoiner stringJoiner = new StringJoiner(" ");
+        if (!CollectionUtils.isEmpty(user.getRoles())) {
+            user.getRoles().forEach(stringJoiner::add);
+        }
+        return stringJoiner.toString();
     }
 }

@@ -8,7 +8,7 @@ spring:
     password: ${POSTGRES_PASSWORD:123}
 
   jpa:
-    show-sql: true
+    show-sql: off
     hibernate:
       ddl-auto: update
     properties:
@@ -29,7 +29,7 @@ server:
 logging:
   level:
     root: warn
-    org.springframework.security: DEBUG
+    org.springframework.security: INFO
 
 jwt:
   signer-key: "dbb7962ca1a69376e6ba22aac28b3b7c73e58876b1588ebe227bdc7d405f0414"
