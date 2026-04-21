@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    @PostAuthorize("hasRole('ADMIN') or returnObject.username == authentication.name")
+    @PostAuthorize("returnObject.username == authentication.name")
     @Override
     public UserResponse getUserById(Long id) {
         log.warn("in method get user by id = {}", id);

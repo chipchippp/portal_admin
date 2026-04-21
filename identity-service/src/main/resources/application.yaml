@@ -28,7 +28,7 @@ server:
 
 logging:
   level:
-    root: warn
+#    root: warn
     org.springframework.security: INFO
 
 jwt:
