@@ -48,6 +48,15 @@ public class UserController {
         }
     }
 
+    @GetMapping("profile")
+    public ApiResponse<UserResponse> getProfile(){
+        return ApiResponse.<UserResponse>builder()
+                .status(HttpStatus.OK.value())
+                .message("Get profile successfully")
+                .data(userService.getMyProfile())
+                .build();
+    }
+
     @GetMapping("/{id}")
     public ApiResponse<UserResponse> getUserById(@PathVariable Long id){
         try {

@@ -80,7 +80,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .issuer("loc.com")
                 .issueTime(new Date())
                 .expirationTime(new Date(
-                        Instant.now().plus(1, ChronoUnit.MINUTES).toEpochMilli()))
+                        Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()))
                 .claim("scope", buildScope(user))
                 .build();
 

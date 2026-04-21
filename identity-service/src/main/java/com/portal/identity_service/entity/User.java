@@ -32,5 +32,4 @@ public class User {
      Status status;
      LocalDate dateOfBirth;
      Set<String> roles;
-
 }

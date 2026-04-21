@@ -13,7 +13,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -58,14 +60,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserResponse getMyProfile() {
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+
+        User user = userRepository.findByUsername(name)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        return userMapper.toUserResponse(user);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @Override
     public List<UserResponse> getAllUsers() {
+        log.warn("in method get users");
         return userMapper.toUserResponseList(userRepository.findAll());
     }
 
 
+    @PostAuthorize("hasRole('ADMIN') or returnObject.username == authentication.name")
     @Override
     public UserResponse getUserById(Long id) {
-        return userMapper.toUserResponse(getUserEntityById(id));
+        log.warn("in method get user by id = {}", id);
+        return userMapper.toUserResponse(userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
     }
 
     private User getUserEntityById(Long id) {
