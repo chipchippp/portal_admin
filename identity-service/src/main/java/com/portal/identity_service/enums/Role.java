@@ -6,3 +6,6 @@ public enum Role {
     STAFF,      // Nhân viên hỗ trợ, xử lý đơn hàng
     USER        // Khách hàng mua sắm
 }
+
+//User -> many Role
+// Role -> many Permission

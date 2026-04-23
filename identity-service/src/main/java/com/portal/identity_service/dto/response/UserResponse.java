@@ -27,6 +27,6 @@ public class UserResponse {
       Status status;
       @JsonFormat(pattern = "yyyy-MM-dd")
       LocalDate dateOfBirth;
-      Set<String> roles;
+      Set<RoleResponse> roles;
 
 }

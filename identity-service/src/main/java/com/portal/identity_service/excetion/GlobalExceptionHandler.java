@@ -20,6 +20,7 @@ public class GlobalExceptionHandler {
 
 //    @ExceptionHandler(value = Exception.class)
 //    ResponseEntity<ApiResponse> handleRuntimeException(AppException ex) {
+//        ex.printStackTrace();
 //        ApiResponse apiResponse = new ApiResponse();
 //
 //        apiResponse.setStatus(ErrorCode.UNCATEGORIZED_ERROR.getCode());
