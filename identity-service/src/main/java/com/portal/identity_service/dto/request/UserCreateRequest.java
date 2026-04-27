@@ -1,5 +1,6 @@
 package com.portal.identity_service.dto.request;
 
+import com.portal.identity_service.validator.DobConstraint;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -22,5 +23,7 @@ public class UserCreateRequest {
     String phoneNumber;
     String gender;
     String status;
+
+    @DobConstraint(minAge = 18, message = "INVALID_DOB")
     LocalDate dateOfBirth;
 }

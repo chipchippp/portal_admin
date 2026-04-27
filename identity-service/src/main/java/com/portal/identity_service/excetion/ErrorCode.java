@@ -15,7 +15,9 @@ public enum ErrorCode {
     PHONE_INVALID(1005, "Phone number must be at least 10 characters long", HttpStatus.BAD_REQUEST),
     USER_NOT_EXISTED(1006, "User not existed", HttpStatus.NOT_FOUND),
     UNAUTHENTICATED(1007, "Unauthenticated", HttpStatus.UNAUTHORIZED),
-    UNAUTHORIZED(1008, "U dnt have permission", HttpStatus.FORBIDDEN);
+    UNAUTHORIZED(1008, "U dnt have permission", HttpStatus.FORBIDDEN),
+    INVALID_DOB(1009, "User must be at least 18 years old", HttpStatus.BAD_REQUEST)
+    ;
 
     private final int code;
     private final String message;
