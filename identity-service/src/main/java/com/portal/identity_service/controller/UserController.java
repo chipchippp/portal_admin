@@ -3,7 +3,6 @@ package com.portal.identity_service.controller;
 import com.portal.identity_service.dto.request.*;
 import com.portal.identity_service.dto.response.ApiResponse;
 import com.portal.identity_service.dto.response.UserResponse;
-import com.portal.identity_service.entity.User;
 import com.portal.identity_service.service.UserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -74,7 +73,8 @@ public class UserController {
             UserResponse updatedUser = userService.userUpdate(id, request);
             return new ApiResponse<>(HttpStatus.OK.value(), "user.update.success", updatedUser);
         } catch (Exception e) {
-            return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "user.update.fail");
+            e.printStackTrace();
+            return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), e.getMessage());
         }
     }
 

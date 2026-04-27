@@ -18,7 +18,6 @@ import java.util.HashSet;
 @Configuration
 @Slf4j
 public class ApplicationInitConfig {
-
     PasswordEncoder passwordEncoder;
 
     @Bean
@@ -35,7 +34,7 @@ public class ApplicationInitConfig {
                         .fullName("Admin")
                         .email("admin@gmail.com")
                         .phoneNumber("0123456789")
-                        .roles(roles)
+//                        .roles(roles)
                         .build();
                 userRepository.save(user);
                 log.warn("Admin user created with username: admin and password: 123456");

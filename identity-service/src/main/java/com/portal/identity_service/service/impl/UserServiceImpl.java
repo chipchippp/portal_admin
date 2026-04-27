@@ -7,6 +7,7 @@ import com.portal.identity_service.entity.User;
 import com.portal.identity_service.enums.Role;
 import com.portal.identity_service.excetion.*;
 import com.portal.identity_service.mapper.UserMapper;
+import com.portal.identity_service.repository.RoleRepository;
 import com.portal.identity_service.repository.UserRepository;
 import com.portal.identity_service.service.UserService;
 import lombok.AccessLevel;
@@ -28,6 +29,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserServiceImpl implements UserService {
     UserRepository userRepository;
+    RoleRepository roleRepository;
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
 
@@ -50,6 +52,11 @@ public class UserServiceImpl implements UserService {
     public UserResponse userUpdate(Long id, UserUpdateRequest request) {
         User user = getUserEntityById(id);
         userMapper.updateUserFromRequest(user, request);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        var roles = roleRepository.findAllById(request.getRoles());
+        System.out.println(roles);
+        user.setRoles(new HashSet<>(roles));
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
@@ -70,6 +77,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasAuthority('APPROVE_POST')")
     @Override
     public List<UserResponse> getAllUsers() {
         log.warn("in method get users");

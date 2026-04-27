@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.util.Set;
 
 @Getter
-@Data
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -31,11 +31,11 @@ public class User {
      @Enumerated(EnumType.STRING)
      Status status;
      LocalDate dateOfBirth;
-     @ManyToMany
-//     @JoinTable(
-//             name = "user_roles",
-//             joinColumns = @JoinColumn(name = "user_id"),
-//             inverseJoinColumns = @JoinColumn(name = "role_name")
-//     )
+     @ManyToMany(fetch = FetchType.LAZY)
+     @JoinTable(
+         name = "user_roles",
+         joinColumns = @JoinColumn(name = "user_id"),
+         inverseJoinColumns = @JoinColumn(name = "role_name")
+     )
      Set<Role> roles;
 }

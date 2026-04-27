@@ -10,14 +10,19 @@ import org.mapstruct.MappingTarget;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(
+        componentModel = "spring",
+        uses = {RoleMapper.class}
+)
 public interface UserMapper {
 
     User toUser(UserCreateRequest request);
 
-    @Mapping(target = "password", ignore = true) // Tránh ánh xạ trường "status" từ UserUpdateRequest sang User
+    @Mapping(target = "password", ignore = true)
     UserResponse toUserResponse(User user);
 
     List<UserResponse> toUserResponseList(List<User> users);
+
+    @Mapping(target = "roles", ignore = true)
     void updateUserFromRequest(@MappingTarget User user, UserUpdateRequest request);
 }
