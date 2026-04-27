@@ -24,6 +24,6 @@ public class UserCreateRequest {
     String gender;
     String status;
 
-    @DobConstraint(minAge = 18, message = "INVALID_DOB")
+    @DobConstraint(min = 18, message = "INVALID_DOB")
     LocalDate dateOfBirth;
 }
