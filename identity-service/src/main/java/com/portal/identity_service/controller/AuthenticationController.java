@@ -3,6 +3,7 @@ package com.portal.identity_service.controller;
 import com.nimbusds.jose.JOSEException;
 import com.portal.identity_service.dto.request.AuthenticationRequest;
 import com.portal.identity_service.dto.request.IntrospectRequest;
+import com.portal.identity_service.dto.request.LogoutRequest;
 import com.portal.identity_service.dto.response.ApiResponse;
 import com.portal.identity_service.dto.response.AuthenticationResponse;
 import com.portal.identity_service.dto.response.IntrospectResponse;
@@ -43,6 +44,16 @@ public class AuthenticationController {
                 .status(200)
                 .message("Introspection successful")
                 .data(result)
+                .build();
+    }
+
+    @PostMapping("/logout")
+    public ApiResponse<Void> logout(@RequestBody LogoutRequest request) throws ParseException, JOSEException {
+
+        authenticationService.logout(request);
+        return ApiResponse.<Void>builder()
+                .status(200)
+                .message("Logout successful")
                 .build();
     }
 }

@@ -1,6 +1,7 @@
 package com.portal.identity_service.configuration;
 
 import com.portal.identity_service.enums.Role;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -24,46 +25,34 @@ import javax.crypto.spec.SecretKeySpec;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+    private final CustomJwtDecoder customJwtDecoder;
+
     private final String[] PUBLIC_ENDPOINTS = {
             "/api/v1/auth/**",
-//            "/api/v1/users/**"
+            "/api/v1/introspect"
     };
-
-    @NonFinal
-    @Value("${jwt.signer-key}")
-    protected String SIGNER_KEY;
-
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/users/getAll").hasRole(Role.ADMIN.name())
+                .requestMatchers(HttpMethod.GET, "/api/v1/users/getAll")
+                .hasRole(Role.ADMIN.name())
                 .anyRequest().authenticated()
         ).csrf(AbstractHttpConfigurer::disable);
 
-        http.oauth2ResourceServer(oauth2 -> oauth2.jwt(
-                jwt -> jwt.decoder(jwtDecoder())
-                        .jwtAuthenticationConverter(jwtAuthenticationConverter()))
+        http.oauth2ResourceServer(oauth2 -> oauth2
+                .jwt(jwt -> jwt
+                        .decoder(customJwtDecoder)
+                        .jwtAuthenticationConverter(jwtAuthenticationConverter())
+                )
                 .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
         );
+
         return http.build();
     }
-
-    // khi request đến sẽ được giải mã bằng JwtDecoder, nếu giải mã thành công thì sẽ được coi là đã xác thực
-    // ví dụ như khi request token đến endpoint /api/v1/user/me, thì sẽ được giải mã bằng JwtDecoder,
-    // nếu giải mã thành công thì sẽ được coi là đã xác thực và có thể truy cập vào endpoint đó
-    @Bean
-    public JwtDecoder jwtDecoder() {
-        SecretKeySpec secretKeySpec = new SecretKeySpec(SIGNER_KEY.getBytes(), "HS512");
-
-        return NimbusJwtDecoder.withSecretKey(secretKeySpec)
-                .macAlgorithm(MacAlgorithm.HS512)
-                .build();
-
-    }
-
     JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter converter = new JwtGrantedAuthoritiesConverter();
         converter.setAuthorityPrefix("");

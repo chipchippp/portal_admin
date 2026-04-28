@@ -16,7 +16,8 @@ public enum ErrorCode {
     USER_NOT_EXISTED(1006, "User not existed", HttpStatus.NOT_FOUND),
     UNAUTHENTICATED(1007, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(1008, "U dnt have permission", HttpStatus.FORBIDDEN),
-    INVALID_DOB(1009, "User must be at least {min} years old", HttpStatus.BAD_REQUEST)
+    INVALID_DOB(1009, "User must be at least {min} years old", HttpStatus.BAD_REQUEST),
+    INVALID_TOKEN(1010, "Invalid token", HttpStatus.BAD_REQUEST)
     ;
 
     private final int code;
