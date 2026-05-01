@@ -11,7 +11,7 @@ import com.portal.identity_service.dto.response.IntrospectResponse;
 import java.text.ParseException;
 
 public interface AuthenticationService {
-    AuthenticationResponse authenticate(AuthenticationRequest request);
+    AuthenticationResponse authenticate(AuthenticationRequest request) throws JOSEException, ParseException;
     IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException;
     void logout(LogoutRequest request) throws ParseException, JOSEException;
     AuthenticationResponse refreshToken(RefreshRequest request) throws ParseException, JOSEException;
