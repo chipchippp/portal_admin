@@ -91,6 +91,30 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     }
 
+    @Override
+    public AuthenticationResponse refreshToken(RefreshRequest request) throws ParseException, JOSEException {
+        var signedJwt = verifyToken(request.getToken());
+        var jit = signedJwt.getJWTClaimsSet().getJWTID();
+        var expirationTime = signedJwt.getJWTClaimsSet().getExpirationTime();
+
+        InvalidatedToken invalidatedToken = InvalidatedToken.builder()
+                .id(jit)
+                .expirationTime(expirationTime)
+                .build();
+
+        invalidatedTokenRepository.save(invalidatedToken);
+
+        var username = signedJwt.getJWTClaimsSet().getSubject();
+        var user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHORIZED));
+
+        var token = generateAccessToken(user);
+        return AuthenticationResponse.builder()
+                .accessToken(token)
+                .authenticated(true)
+                .build();
+    }
+
     private SignedJWT verifyToken(String token) throws ParseException, JOSEException {
         JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
 

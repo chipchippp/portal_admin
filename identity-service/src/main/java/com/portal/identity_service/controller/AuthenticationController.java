@@ -4,6 +4,7 @@ import com.nimbusds.jose.JOSEException;
 import com.portal.identity_service.dto.request.AuthenticationRequest;
 import com.portal.identity_service.dto.request.IntrospectRequest;
 import com.portal.identity_service.dto.request.LogoutRequest;
+import com.portal.identity_service.dto.request.RefreshRequest;
 import com.portal.identity_service.dto.response.ApiResponse;
 import com.portal.identity_service.dto.response.AuthenticationResponse;
 import com.portal.identity_service.dto.response.IntrospectResponse;
@@ -54,6 +55,17 @@ public class AuthenticationController {
         return ApiResponse.<Void>builder()
                 .status(200)
                 .message("Logout successful")
+                .build();
+    }
+
+    @PostMapping("/refresh")
+    public ApiResponse<AuthenticationResponse> authenticate(@RequestBody RefreshRequest request) throws ParseException, JOSEException {
+
+        var result = authenticationService.refreshToken(request);
+        return ApiResponse.<AuthenticationResponse>builder()
+                .status(200)
+                .message("Authentication successful")
+                .data(result)
                 .build();
     }
 }
