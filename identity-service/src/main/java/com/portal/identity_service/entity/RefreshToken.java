@@ -1,9 +1,11 @@
 package com.portal.identity_service.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -24,4 +26,8 @@ public class RefreshToken {
     String deviceId;
     String ipAddress;
     String userAgent;
+
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
+    @Column(name = "login_time")
+    LocalDateTime loginTime;
 }
