@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @ControllerAdvice
+@RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
 

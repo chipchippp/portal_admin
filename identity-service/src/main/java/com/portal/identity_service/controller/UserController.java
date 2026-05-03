@@ -26,10 +26,10 @@ public class UserController {
     UserService userService;
 
     @PostMapping
-    public ApiResponse<String> addUser(@Valid @RequestBody UserCreateRequest request){
+    public ApiResponse<UserResponse> addUser(@Valid @RequestBody UserCreateRequest request){
         log.info("Request add user = {}: ", request.getUsername());
-            userService.createUser(request);
-            return new ApiResponse<>(HttpStatus.CREATED.value(), "user.add.success", "User created successfully");
+        UserResponse user = userService.createUser(request);
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "user.add.success", user);
     }
 
 

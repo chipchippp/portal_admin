@@ -84,14 +84,22 @@ public class AuthenticationController {
     }
 
     @PostMapping("/logout-device")
-    public void logoutDevice(@RequestBody Map<String, String> body) {
+    public ApiResponse<Void> logoutDevice(@RequestBody Map<String, String> body) {
         String tokenId = body.get("refreshTokenId");
         authenticationService.logoutDevice(tokenId);
+        return ApiResponse.<Void>builder()
+                .status(200)
+                .message("Logout-device successful")
+                .build();
     }
 
     @PostMapping("/logout-all")
-    public void logoutAll() {
+    public ApiResponse<Void> logoutAll() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         authenticationService.logoutAllDevices(username);
+        return ApiResponse.<Void>builder()
+                .status(200)
+                .message("Logout all successful")
+                .build();
     }
 }
