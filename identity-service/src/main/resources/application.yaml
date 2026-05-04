@@ -6,6 +6,7 @@ spring:
     url: ${POSTGRES_URL:jdbc:postgresql://localhost:5432/PortalAdmin}
     username: ${POSTGRES_USER:postgres}
     password: ${POSTGRES_PASSWORD:123}
+    driverClassName: "org.postgresql.Driver"
 
   jpa:
     show-sql: off
