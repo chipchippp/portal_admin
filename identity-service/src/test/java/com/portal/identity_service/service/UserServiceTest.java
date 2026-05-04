@@ -11,10 +11,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -67,7 +69,7 @@ public class UserServiceTest {
          var response = userService.createUser(request);
 
         // Then
-        Assertions.assertThat(response.getId()).isEqualTo(1L);
+        assertThat(response.getId()).isEqualTo(userResponse.getId());
         assertThat(response.getUsername()).isEqualTo(request.getUsername());
 
     }
@@ -78,12 +80,38 @@ public class UserServiceTest {
         when(userRepository.existsByUsername(anyString())).thenReturn(true);
 
         // When
-        assertThrows(AppException.class, () -> userService.createUser(request));
+        var exception = assertThrows(AppException.class, () -> userService.createUser(request));
+
+        // Then
+        assertThat(exception.getErrorCode().getCode()).isEqualTo(1002);
+
+    }
+
+    @Test
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    void getMyProfile_validUser_success() {
+        // Given
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
+
+        // When
+        var response = userService.getMyProfile();
+
+        // Then
+        assertThat(response.getId()).isEqualTo(userResponse.getId());
+        assertThat(response.getUsername()).isEqualTo(response.getUsername());
+    }
+
+    @Test
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    void getMyProfile_userNotFound_error() {
+        // Given
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.ofNullable(null));
+
+        // When
+        var exception = assertThrows(AppException.class, () -> userService.getMyProfile());
 
 
         // Then
-        var exception = assertThrows(AppException.class, () -> userService.createUser(request));
-        assertThat(exception.getErrorCode().getCode()).isEqualTo(1002);
-
+        assertThat(exception.getErrorCode().getCode()).isEqualTo(1006);
     }
 }
