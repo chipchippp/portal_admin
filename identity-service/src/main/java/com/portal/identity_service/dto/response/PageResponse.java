@@ -1,9 +1,9 @@
 package com.portal.identity_service.dto.response;
 
+import java.io.Serializable;
+
 import lombok.Builder;
 import lombok.Getter;
-
-import java.io.Serializable;
 
 @Getter
 @Builder

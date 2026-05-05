@@ -1,5 +1,7 @@
 package com.portal.identity_service.configuration;
 
+import java.util.HashSet;
+
 import com.portal.identity_service.entity.User;
 import com.portal.identity_service.enums.Role;
 import com.portal.identity_service.repository.UserRepository;
@@ -12,7 +14,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import java.util.HashSet;
 
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -25,15 +26,14 @@ public class ApplicationInitConfig {
     @ConditionalOnProperty(
             prefix = "spring.datasource",
             value = "driver-class-name",
-            havingValue = "org.postgresql.Driver"
-    )
+            havingValue = "org.postgresql.Driver")
     ApplicationRunner init(UserRepository userRepository) {
         log.info("Initializing application with PostgreSQL database...");
         return args -> {
             // Khởi tạo dữ liệu mặc định hoặc thực hiện các tác vụ cần thiết khi ứng dụng khởi động
             var roles = new HashSet<String>();
             roles.add(Role.ADMIN.name());
-            if(userRepository.findByUsername("admin").isEmpty()){
+            if (userRepository.findByUsername("admin").isEmpty()) {
                 // Tạo tài khoản admin mặc định nếu chưa tồn tại
                 User user = User.builder()
                         .username("admin")
@@ -41,11 +41,10 @@ public class ApplicationInitConfig {
                         .fullName("Admin")
                         .email("admin@gmail.com")
                         .phoneNumber("0123456789")
-//                        .roles(roles)
+                        //                        .roles(roles)
                         .build();
                 userRepository.save(user);
                 log.warn("Admin user created with username: admin and password: 123456");
-
             }
         };
     }

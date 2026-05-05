@@ -1,10 +1,11 @@
 package com.portal.identity_service.configuration;
 
+import javax.crypto.spec.SecretKeySpec;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Component;
-import javax.crypto.spec.SecretKeySpec;
 
 @Component
 public class CustomJwtDecoder implements JwtDecoder {
@@ -18,11 +19,9 @@ public class CustomJwtDecoder implements JwtDecoder {
     public Jwt decode(String token) throws JwtException {
 
         if (nimbusJwtDecoder == null) {
-            SecretKeySpec secretKeySpec =
-                    new SecretKeySpec(SIGNER_KEY.getBytes(), "HS512");
+            SecretKeySpec secretKeySpec = new SecretKeySpec(SIGNER_KEY.getBytes(), "HS512");
 
-            nimbusJwtDecoder = NimbusJwtDecoder
-                    .withSecretKey(secretKeySpec)
+            nimbusJwtDecoder = NimbusJwtDecoder.withSecretKey(secretKeySpec)
                     .macAlgorithm(MacAlgorithm.HS512)
                     .build();
         }

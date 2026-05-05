@@ -1,5 +1,15 @@
 package com.portal.identity_service.service.impl;
 
+import static java.time.ZoneId.systemDefault;
+
+import java.text.ParseException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
+import java.util.List;
+import java.util.StringJoiner;
+import java.util.UUID;
+
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.*;
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -20,14 +30,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import java.text.ParseException;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.List;
-import java.util.StringJoiner;
-import java.util.UUID;
-import static java.time.ZoneId.systemDefault;
 
 @Slf4j
 @Service
@@ -55,8 +57,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     // ========================================================
 
     @Override
-    public AuthenticationResponse authenticate(AuthenticationRequest request)
-            throws JOSEException, ParseException {
+    public AuthenticationResponse authenticate(AuthenticationRequest request) throws JOSEException, ParseException {
 
         User user = getUser(request.getUsername());
         validatePassword(request, user);
@@ -73,8 +74,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     @Transactional
-    public AuthenticationResponse refreshToken(RefreshRequest request)
-            throws ParseException, JOSEException {
+    public AuthenticationResponse refreshToken(RefreshRequest request) throws ParseException, JOSEException {
 
         SignedJWT jwt = verifyToken(request.getToken(), "refresh");
 
@@ -109,8 +109,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public void logoutDevice(String tokenId) {
-        RefreshToken token = refreshTokenRepository.findById(tokenId)
-                .orElseThrow(() -> new AppException(ErrorCode.INVALID_TOKEN));
+        RefreshToken token =
+                refreshTokenRepository.findById(tokenId).orElseThrow(() -> new AppException(ErrorCode.INVALID_TOKEN));
 
         token.setRevoked(true);
         refreshTokenRepository.save(token);
@@ -124,16 +124,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public List<SessionResponse> getUserSessions(String username) {
-        return refreshTokenRepository
-                .findByUsernameAndRevokedFalse(username)
-                .stream()
+        return refreshTokenRepository.findByUsernameAndRevokedFalse(username).stream()
                 .map(this::mapToSession)
                 .toList();
     }
 
     @Override
-    public IntrospectResponse introspect(IntrospectRequest request)
-            throws JOSEException, ParseException {
+    public IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException {
 
         boolean valid = true;
 
@@ -143,9 +140,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             valid = false;
         }
 
-        return IntrospectResponse.builder()
-                .valid(valid)
-                .build();
+        return IntrospectResponse.builder().valid(valid).build();
     }
 
     // ========================================================
@@ -193,10 +188,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .claim("scope", buildScope(user))
                 .build();
 
-        JWSObject jws = new JWSObject(
-                new JWSHeader(JWSAlgorithm.HS512),
-                new Payload(claims.toJSONObject())
-        );
+        JWSObject jws = new JWSObject(new JWSHeader(JWSAlgorithm.HS512), new Payload(claims.toJSONObject()));
 
         jws.sign(new MACSigner(SIGNER_KEY.getBytes()));
         return jws.serialize();
@@ -206,8 +198,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     // ================= TOKEN VERIFICATION ====================
     // ========================================================
 
-    private SignedJWT verifyToken(String token, String expectedType)
-            throws ParseException, JOSEException {
+    private SignedJWT verifyToken(String token, String expectedType) throws ParseException, JOSEException {
 
         SignedJWT jwt = SignedJWT.parse(token);
 
@@ -245,8 +236,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private void verifyRefreshTokenInDB(SignedJWT jwt) throws ParseException {
         String jti = jwt.getJWTClaimsSet().getJWTID();
 
-        RefreshToken stored = refreshTokenRepository.findById(jti)
-                .orElseThrow(() -> new AppException(ErrorCode.INVALID_TOKEN));
+        RefreshToken stored =
+                refreshTokenRepository.findById(jti).orElseThrow(() -> new AppException(ErrorCode.INVALID_TOKEN));
 
         if (stored.isRevoked() || stored.getExpiryTime().before(new Date())) {
             throw new AppException(ErrorCode.INVALID_TOKEN);
@@ -280,8 +271,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     // ========================================================
 
     private User getUser(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        return userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
     }
 
     private void validatePassword(AuthenticationRequest request, User user) {
@@ -293,8 +283,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private RefreshToken getValidRefreshToken(SignedJWT jwt) throws ParseException {
         String jti = jwt.getJWTClaimsSet().getJWTID();
 
-        RefreshToken stored = refreshTokenRepository.findById(jti)
-                .orElseThrow(() -> new AppException(ErrorCode.INVALID_TOKEN));
+        RefreshToken stored =
+                refreshTokenRepository.findById(jti).orElseThrow(() -> new AppException(ErrorCode.INVALID_TOKEN));
 
         if (stored.isRevoked() || stored.getExpiryTime().before(new Date())) {
             throw new AppException(ErrorCode.INVALID_TOKEN);
@@ -353,8 +343,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 joiner.add("ROLE_" + role.getName());
 
                 if (!CollectionUtils.isEmpty(role.getPermissions())) {
-                    role.getPermissions()
-                            .forEach(p -> joiner.add(p.getName()));
+                    role.getPermissions().forEach(p -> joiner.add(p.getName()));
                 }
             });
         }

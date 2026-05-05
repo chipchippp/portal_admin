@@ -1,5 +1,7 @@
 package com.portal.identity_service.service.impl;
 
+import java.util.List;
+
 import com.portal.identity_service.dto.request.PermissionRequest;
 import com.portal.identity_service.dto.response.PermissionResponse;
 import com.portal.identity_service.entity.Permission;
@@ -11,8 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -34,7 +34,6 @@ public class PermissionServiceImpl implements PermissionService {
     public List<PermissionResponse> getAllPermissions() {
         var permissions = permissionRepository.findAll();
         return permissions.stream().map(permissionMapper::toPermissionResponse).toList();
-
     }
 
     @Override
@@ -43,13 +42,10 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    public void updatePermission(String permission, PermissionRequest request) {
-
-    }
+    public void updatePermission(String permission, PermissionRequest request) {}
 
     @Override
     public void deletePermission(String permission) {
         permissionRepository.deleteById(permission);
     }
-
 }

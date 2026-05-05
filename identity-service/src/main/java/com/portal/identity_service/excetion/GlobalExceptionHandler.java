@@ -1,18 +1,16 @@
 package com.portal.identity_service.excetion;
 
+import java.util.Map;
+import java.util.Objects;
+import javax.swing.*;
+
 import com.portal.identity_service.dto.response.ApiResponse;
 import jakarta.validation.ConstraintViolation;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-
-import javax.swing.*;
-import java.util.Map;
-import java.util.Objects;
 
 @ControllerAdvice
 @RestControllerAdvice
@@ -30,15 +28,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(apiResponse);
     }
 
-//    @ExceptionHandler(value = Exception.class)
-//    ResponseEntity<ApiResponse> handleRuntimeException(AppException ex) {
-//        ex.printStackTrace();
-//        ApiResponse apiResponse = new ApiResponse();
-//
-//        apiResponse.setStatus(ErrorCode.UNCATEGORIZED_ERROR.getCode());
-//        apiResponse.setMessage(ErrorCode.UNCATEGORIZED_ERROR.getMessage());
-//        return ResponseEntity.badRequest().body(apiResponse);
-//    }
+    //    @ExceptionHandler(value = Exception.class)
+    //    ResponseEntity<ApiResponse> handleRuntimeException(AppException ex) {
+    //        ex.printStackTrace();
+    //        ApiResponse apiResponse = new ApiResponse();
+    //
+    //        apiResponse.setStatus(ErrorCode.UNCATEGORIZED_ERROR.getCode());
+    //        apiResponse.setMessage(ErrorCode.UNCATEGORIZED_ERROR.getMessage());
+    //        return ResponseEntity.badRequest().body(apiResponse);
+    //    }
 
     @ExceptionHandler(value = AppException.class)
     ResponseEntity<ApiResponse> handleAppException(AppException ex) {
@@ -58,8 +56,8 @@ public class GlobalExceptionHandler {
         Map<String, Object> attributes = null;
         try {
             errorCode = ErrorCode.valueOf(enumKey);
-            var constraintViolation = ex.getBindingResult()
-                    .getAllErrors().getFirst().unwrap(ConstraintViolation.class);
+            var constraintViolation =
+                    ex.getBindingResult().getAllErrors().getFirst().unwrap(ConstraintViolation.class);
 
             attributes = constraintViolation.getConstraintDescriptor().getAttributes();
             log.info("Constraint violation attributes: {}", attributes);
@@ -72,10 +70,11 @@ public class GlobalExceptionHandler {
         ApiResponse apiResponse = new ApiResponse();
 
         apiResponse.setStatus(errorCode.getCode());
-        apiResponse.setMessage(Objects.nonNull(attributes) ? mapAttribute(errorCode.getMessage(), attributes) : errorCode.getMessage());
-        return ResponseEntity
-                .status(errorCode.getHttpStatus())
-                .body(apiResponse);
+        apiResponse.setMessage(
+                Objects.nonNull(attributes)
+                        ? mapAttribute(errorCode.getMessage(), attributes)
+                        : errorCode.getMessage());
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(apiResponse);
     }
 
     private String mapAttribute(String message, Map<String, Object> attributes) {
@@ -87,12 +86,10 @@ public class GlobalExceptionHandler {
     ResponseEntity<ApiResponse> handleAccessDeniedException(AccessDeniedException ex) {
         ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
 
-        return ResponseEntity
-                .status(errorCode.getHttpStatus())
+        return ResponseEntity.status(errorCode.getHttpStatus())
                 .body(ApiResponse.builder()
                         .status(errorCode.getCode())
                         .message(errorCode.getMessage())
-                        .build()
-                );
+                        .build());
     }
 }

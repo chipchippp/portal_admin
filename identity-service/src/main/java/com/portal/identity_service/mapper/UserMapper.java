@@ -1,5 +1,7 @@
 package com.portal.identity_service.mapper;
 
+import java.util.List;
+
 import com.portal.identity_service.dto.request.UserCreateRequest;
 import com.portal.identity_service.dto.request.UserUpdateRequest;
 import com.portal.identity_service.dto.response.UserResponse;
@@ -8,12 +10,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-import java.util.List;
-
 @Mapper(
         componentModel = "spring",
-        uses = {RoleMapper.class}
-)
+        uses = {RoleMapper.class})
 public interface UserMapper {
 
     User toUser(UserCreateRequest request);

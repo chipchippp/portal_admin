@@ -1,5 +1,9 @@
 package com.portal.identity_service.controller;
 
+import java.text.ParseException;
+import java.util.List;
+import java.util.Map;
+
 import com.nimbusds.jose.JOSEException;
 import com.portal.identity_service.dto.request.AuthenticationRequest;
 import com.portal.identity_service.dto.request.IntrospectRequest;
@@ -9,7 +13,6 @@ import com.portal.identity_service.dto.response.ApiResponse;
 import com.portal.identity_service.dto.response.AuthenticationResponse;
 import com.portal.identity_service.dto.response.IntrospectResponse;
 import com.portal.identity_service.dto.response.SessionResponse;
-import com.portal.identity_service.entity.RefreshToken;
 import com.portal.identity_service.repository.RefreshTokenRepository;
 import com.portal.identity_service.service.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,10 +21,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.text.ParseException;
-import java.util.List;
-import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -32,7 +31,9 @@ public class AuthenticationController {
     RefreshTokenRepository refreshTokenRepository;
 
     @PostMapping("/login")
-    public ApiResponse<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request, HttpServletRequest httpRequest) throws ParseException, JOSEException {
+    public ApiResponse<AuthenticationResponse> authenticate(
+            @RequestBody AuthenticationRequest request, HttpServletRequest httpRequest)
+            throws ParseException, JOSEException {
 
         request.setIpAddress(httpRequest.getRemoteAddr());
         request.setUserAgent(httpRequest.getHeader("User-Agent"));
@@ -46,7 +47,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("/introspect")
-    public ApiResponse<IntrospectResponse> introspect(@RequestBody IntrospectRequest request) throws ParseException, JOSEException {
+    public ApiResponse<IntrospectResponse> introspect(@RequestBody IntrospectRequest request)
+            throws ParseException, JOSEException {
 
         var result = authenticationService.introspect(request);
         return ApiResponse.<IntrospectResponse>builder()
@@ -67,7 +69,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("/refresh")
-    public ApiResponse<AuthenticationResponse> authenticate(@RequestBody RefreshRequest request) throws ParseException, JOSEException {
+    public ApiResponse<AuthenticationResponse> authenticate(@RequestBody RefreshRequest request)
+            throws ParseException, JOSEException {
 
         var result = authenticationService.refreshToken(request);
         return ApiResponse.<AuthenticationResponse>builder()

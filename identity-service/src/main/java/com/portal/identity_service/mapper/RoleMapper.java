@@ -1,12 +1,12 @@
 package com.portal.identity_service.mapper;
 
+import java.util.List;
+
 import com.portal.identity_service.dto.request.RoleRequest;
 import com.portal.identity_service.dto.response.RoleResponse;
 import com.portal.identity_service.entity.Role;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-
-import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface RoleMapper {

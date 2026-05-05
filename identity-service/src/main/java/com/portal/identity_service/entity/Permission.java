@@ -1,12 +1,11 @@
 package com.portal.identity_service.entity;
 
+import java.util.Set;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-
-import java.util.Set;
 
 @Getter
 @Setter
@@ -17,12 +16,12 @@ import java.util.Set;
 @Table(name = "permissions")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Permission {
-     @Id
-     String name;
+    @Id
+    String name;
 
-     String description;
+    String description;
 
-     @ManyToMany(mappedBy = "permissions")
-     @JsonIgnore
-     Set<Role> roles;
+    @ManyToMany(mappedBy = "permissions")
+    @JsonIgnore
+    Set<Role> roles;
 }

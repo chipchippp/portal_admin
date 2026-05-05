@@ -1,5 +1,6 @@
 package com.portal.identity_service.controller;
 
+import java.time.LocalDate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -17,17 +18,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import java.time.LocalDate;
-import org.springframework.test.context.ActiveProfiles;
 
 @Slf4j
 @SpringBootTest
 @AutoConfigureMockMvc
-//@TestPropertySource("/test.properties")
+// @TestPropertySource("/test.properties")
 @ActiveProfiles("test")
 public class UserControllerTest {
 
@@ -36,12 +35,13 @@ public class UserControllerTest {
 
     @MockBean
     private UserService userService;
+
     private UserCreateRequest request;
     private UserResponse userResponse;
     private LocalDate dob;
 
     @BeforeEach
-    void initData(){
+    void initData() {
         dob = LocalDate.of(1990, 1, 1);
         request = UserCreateRequest.builder()
                 .username("admin")
@@ -49,27 +49,24 @@ public class UserControllerTest {
                 .dateOfBirth(dob)
                 .build();
 
-        userResponse = UserResponse.builder()
-                .id(1L)
-                .username("admin")
-                .dateOfBirth(dob)
-                .build();
+        userResponse =
+                UserResponse.builder().id(1L).username("admin").dateOfBirth(dob).build();
     }
 
     @Test
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
-    void  createUser_validRequest_success() throws Exception {
+    @WithMockUser(
+            username = "admin",
+            roles = {"ADMIN"})
+    void createUser_validRequest_success() throws Exception {
         // Given
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         String content = objectMapper.writeValueAsString(request);
 
-        Mockito.when(userService.createUser(ArgumentMatchers.any()))
-                .thenReturn(userResponse);
+        Mockito.when(userService.createUser(ArgumentMatchers.any())).thenReturn(userResponse);
 
         // When, Then
-        mockMvc.perform(MockMvcRequestBuilders
-                        .post("/api/v1/users")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -79,7 +76,9 @@ public class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    @WithMockUser(
+            username = "admin",
+            roles = {"ADMIN"})
     void createUser_usernameInvalid_fail() throws Exception {
         // GIVEN
         request.setUsername("jo");
@@ -88,15 +87,12 @@ public class UserControllerTest {
         String content = objectMapper.writeValueAsString(request);
 
         // WHEN, THEN
-        mockMvc.perform(MockMvcRequestBuilders
-                        .post("/api/v1/users")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(content))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status")
-                        .value(1003))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(1003))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message")
                         .value("Username must be at least 3 characters long"));
     }
-
 }

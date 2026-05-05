@@ -1,9 +1,10 @@
 package com.portal.identity_service.validator;
 
-import jakarta.validation.*;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
+
+import jakarta.validation.*;
 
 public class DobValidator implements ConstraintValidator<DobConstraint, LocalDate> {
     private int minAge;

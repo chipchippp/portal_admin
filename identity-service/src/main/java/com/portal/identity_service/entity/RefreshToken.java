@@ -1,12 +1,12 @@
 package com.portal.identity_service.entity;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Getter
@@ -20,6 +20,7 @@ public class RefreshToken {
 
     @Id
     String id; // jti
+
     String username;
     Date expiryTime;
     boolean revoked;

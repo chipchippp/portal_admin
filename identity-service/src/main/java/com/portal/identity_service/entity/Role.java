@@ -1,10 +1,10 @@
 package com.portal.identity_service.entity;
 
+import java.util.Set;
+
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.Set;
 
 @Getter
 @Setter
@@ -15,15 +15,15 @@ import java.util.Set;
 @Table(name = "roles")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Role {
-     @Id
-     String name;
-     String description;
+    @Id
+    String name;
 
-     @ManyToMany(fetch = FetchType.LAZY)
-     @JoinTable(
-             name = "role_permissions",
-             joinColumns = @JoinColumn(name = "role_name"),
-             inverseJoinColumns = @JoinColumn(name = "permission_name")
-     )
-     Set<Permission> permissions;
+    String description;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "role_permissions",
+            joinColumns = @JoinColumn(name = "role_name"),
+            inverseJoinColumns = @JoinColumn(name = "permission_name"))
+    Set<Permission> permissions;
 }

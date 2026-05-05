@@ -1,13 +1,13 @@
 package com.portal.identity_service.entity;
 
+import java.time.LocalDate;
+import java.util.Set;
+
 import com.portal.identity_service.enums.Gender;
 import com.portal.identity_service.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -20,22 +20,26 @@ import java.util.Set;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-     long id;
-     String username;
-     String password;
-     String fullName;
-     String email;
-     String phoneNumber;
-     @Enumerated(EnumType.STRING)
-     Gender gender;
-     @Enumerated(EnumType.STRING)
-     Status status;
-     LocalDate dateOfBirth;
-     @ManyToMany(fetch = FetchType.LAZY)
-     @JoinTable(
-         name = "user_roles",
-         joinColumns = @JoinColumn(name = "user_id"),
-         inverseJoinColumns = @JoinColumn(name = "role_name")
-     )
-     Set<Role> roles;
+    long id;
+
+    String username;
+    String password;
+    String fullName;
+    String email;
+    String phoneNumber;
+
+    @Enumerated(EnumType.STRING)
+    Gender gender;
+
+    @Enumerated(EnumType.STRING)
+    Status status;
+
+    LocalDate dateOfBirth;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_name"))
+    Set<Role> roles;
 }

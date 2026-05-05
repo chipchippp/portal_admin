@@ -1,9 +1,12 @@
 package com.portal.identity_service.controller;
 
+import java.util.List;
+
 import com.portal.identity_service.dto.request.*;
 import com.portal.identity_service.dto.response.ApiResponse;
 import com.portal.identity_service.dto.response.UserResponse;
 import com.portal.identity_service.service.UserService;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -12,9 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
-
-import java.util.List;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
@@ -26,15 +26,14 @@ public class UserController {
     UserService userService;
 
     @PostMapping
-    public ApiResponse<UserResponse> addUser(@Valid @RequestBody UserCreateRequest request){
+    public ApiResponse<UserResponse> addUser(@Valid @RequestBody UserCreateRequest request) {
         log.info("Request add user = {}: ", request.getUsername());
         UserResponse user = userService.createUser(request);
         return new ApiResponse<>(HttpStatus.CREATED.value(), "user.add.success", user);
     }
 
-
     @GetMapping("getAll")
-    public ApiResponse<List<UserResponse>> getUser(){
+    public ApiResponse<List<UserResponse>> getUser() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         log.warn("Username = {}: ", authentication.getName());
         authentication.getAuthorities().forEach(authority -> log.warn("Authority = {}: ", authority.getAuthority()));
@@ -48,7 +47,7 @@ public class UserController {
     }
 
     @GetMapping("profile")
-    public ApiResponse<UserResponse> getProfile(){
+    public ApiResponse<UserResponse> getProfile() {
         return ApiResponse.<UserResponse>builder()
                 .status(HttpStatus.OK.value())
                 .message("Get profile successfully")
@@ -57,7 +56,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<UserResponse> getUserById(@PathVariable Long id){
+    public ApiResponse<UserResponse> getUserById(@PathVariable Long id) {
         try {
             UserResponse user = userService.getUserById(id);
             return new ApiResponse<>(HttpStatus.OK.value(), "user.getById.success", user);
@@ -67,8 +66,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<UserResponse> updateUser(@PathVariable Long id,
-                                                @Valid @RequestBody UserUpdateRequest request){
+    public ApiResponse<UserResponse> updateUser(@PathVariable Long id, @Valid @RequestBody UserUpdateRequest request) {
         try {
             UserResponse updatedUser = userService.userUpdate(id, request);
             return new ApiResponse<>(HttpStatus.OK.value(), "user.update.success", updatedUser);
@@ -79,7 +77,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<String> deleteUser(@PathVariable Long id){
+    public ApiResponse<String> deleteUser(@PathVariable Long id) {
         try {
             userService.deleteUser(id);
             return new ApiResponse<>(HttpStatus.OK.value(), "user.delete.success", "User deleted successfully");
@@ -87,5 +85,4 @@ public class UserController {
             return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "user.delete.fail", "Delete user fail");
         }
     }
-
 }

@@ -1,5 +1,7 @@
 package com.portal.identity_service.controller;
 
+import java.time.LocalDate;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.portal.identity_service.dto.request.UserCreateRequest;
@@ -20,8 +22,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
-import java.time.LocalDate;
 
 @Slf4j
 @SpringBootTest
@@ -56,15 +56,14 @@ public class UserControllerIntegrationTest {
                 .dateOfBirth(dob)
                 .build();
 
-        userResponse = UserResponse.builder()
-                .id(1L)
-                .username("loc15")
-                .dateOfBirth(dob)
-                .build();
+        userResponse =
+                UserResponse.builder().id(1L).username("loc15").dateOfBirth(dob).build();
     }
 
     @Test
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    @WithMockUser(
+            username = "admin",
+            roles = {"ADMIN"})
     void createUser_validRequest_success() throws Exception {
         // Given
         ObjectMapper objectMapper = new ObjectMapper();
@@ -72,8 +71,7 @@ public class UserControllerIntegrationTest {
         String content = objectMapper.writeValueAsString(request);
 
         // When, Then
-        var response = mockMvc.perform(MockMvcRequestBuilders
-                        .post("/api/v1/users")
+        var response = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -83,6 +81,4 @@ public class UserControllerIntegrationTest {
 
         log.info("Response: {}", response.andReturn().getResponse().getContentAsString());
     }
-
-
 }
