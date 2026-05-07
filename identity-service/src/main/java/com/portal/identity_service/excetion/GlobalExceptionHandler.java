@@ -28,16 +28,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(apiResponse);
     }
 
-    //    @ExceptionHandler(value = Exception.class)
-    //    ResponseEntity<ApiResponse> handleRuntimeException(AppException ex) {
-    //        ex.printStackTrace();
-    //        ApiResponse apiResponse = new ApiResponse();
-    //
-    //        apiResponse.setStatus(ErrorCode.UNCATEGORIZED_ERROR.getCode());
-    //        apiResponse.setMessage(ErrorCode.UNCATEGORIZED_ERROR.getMessage());
-    //        return ResponseEntity.badRequest().body(apiResponse);
-    //    }
-
     @ExceptionHandler(value = AppException.class)
     ResponseEntity<ApiResponse> handleAppException(AppException ex) {
         ErrorCode errorCode = ex.getErrorCode();

@@ -22,7 +22,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
     private final CustomJwtDecoder customJwtDecoder;
 
-    private final String[] PUBLIC_ENDPOINTS = {"/api/v1/auth/**", "/api/v1/introspect", "/api/v1/refresh"};
+    private static final String[] PUBLIC_ENDPOINTS = {"/api/v1/auth/**", "/api/v1/introspect", "/api/v1/refresh"};
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
