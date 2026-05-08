@@ -28,7 +28,7 @@ import java.util.List;
 public class SecurityConfig {
     private final CustomJwtDecoder customJwtDecoder;
 
-    private static final String[] PUBLIC_ENDPOINTS = {"/api/v1/auth/**", "/api/v1/introspect", "/api/v1/refresh"};
+    private static final String[] PUBLIC_ENDPOINTS = {"/api/v1/auth/**", "/api/v1/introspect", "/api/v1/refresh", "/api/v1/users"};
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

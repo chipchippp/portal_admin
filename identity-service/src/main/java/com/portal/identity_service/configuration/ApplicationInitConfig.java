@@ -1,9 +1,11 @@
 package com.portal.identity_service.configuration;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 
 import com.portal.identity_service.entity.User;
 import com.portal.identity_service.enums.Role;
+import com.portal.identity_service.enums.Status;
 import com.portal.identity_service.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +43,9 @@ public class ApplicationInitConfig {
                         .fullName("Admin")
                         .email("admin@gmail.com")
                         .phoneNumber("0123456789")
-                        //                        .roles(roles)
+                        .status(Status.ACTIVE)
+                        .dateOfBirth(LocalDate.parse("2000-01-01"))
+//                                                .roles(roles)
                         .build();
                 userRepository.save(user);
                 log.warn("Admin user created with username: admin and password: 123456");
