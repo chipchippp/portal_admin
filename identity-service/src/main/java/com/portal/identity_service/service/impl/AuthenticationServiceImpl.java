@@ -58,6 +58,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse authenticate(AuthenticationRequest request) throws JOSEException, ParseException {
+        log.info("Signer key: {}", SIGNER_KEY);
 
         User user = getUser(request.getUsername());
         validatePassword(request, user);
