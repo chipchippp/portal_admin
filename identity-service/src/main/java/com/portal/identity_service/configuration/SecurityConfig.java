@@ -1,5 +1,7 @@
 package com.portal.identity_service.configuration;
 
+import java.util.List;
+
 import com.portal.identity_service.enums.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -19,8 +21,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.List;
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -28,35 +28,23 @@ import java.util.List;
 public class SecurityConfig {
     private final CustomJwtDecoder customJwtDecoder;
 
-    private static final String[] PUBLIC_ENDPOINTS = {"/api/v1/auth/**", "/api/v1/introspect", "/api/v1/refresh", "/api/v1/users"};
+    private static final String[] PUBLIC_ENDPOINTS = {
+        "/api/v1/auth/**", "/api/v1/introspect", "/api/v1/refresh", "/api/v1/users"
+    };
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
+        http.csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
-                .authorizeHttpRequests(auth -> auth
-
-                        .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS)
+                .authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS)
                         .permitAll()
-
                         .requestMatchers(HttpMethod.GET, "/api/v1/users/getAll")
                         .hasRole(Role.ADMIN.name())
-
                         .anyRequest()
-                        .authenticated()
-                )
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt
-                                .decoder(customJwtDecoder)
-                                .jwtAuthenticationConverter(
-                                        jwtAuthenticationConverter()
-                                )
-                        )
-                        .authenticationEntryPoint(
-                                new JwtAuthenticationEntryPoint()
-                        )
-                );
+                        .authenticated())
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt ->
+                                jwt.decoder(customJwtDecoder).jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                        .authenticationEntryPoint(new JwtAuthenticationEntryPoint()));
         return http.build();
     }
 
@@ -64,23 +52,14 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of(
-                "http://localhost:3000"
-        ));
+        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
 
-        configuration.setAllowedMethods(List.of(
-                "GET",
-                "POST",
-                "PUT",
-                "DELETE",
-                "OPTIONS"
-        ));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
 
-        UrlBasedCorsConfigurationSource source =
-                new UrlBasedCorsConfigurationSource();
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
 
         return source;

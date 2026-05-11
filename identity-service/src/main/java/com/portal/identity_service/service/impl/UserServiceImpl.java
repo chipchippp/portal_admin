@@ -9,7 +9,6 @@ import com.portal.identity_service.dto.request.UserUpdateRequest;
 import com.portal.identity_service.dto.response.UserResponse;
 import com.portal.identity_service.entity.Role;
 import com.portal.identity_service.entity.User;
-
 import com.portal.identity_service.excetion.*;
 import com.portal.identity_service.mapper.UserMapper;
 import com.portal.identity_service.repository.RoleRepository;

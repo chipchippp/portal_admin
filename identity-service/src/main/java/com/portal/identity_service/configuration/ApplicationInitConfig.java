@@ -45,7 +45,7 @@ public class ApplicationInitConfig {
                         .phoneNumber("0123456789")
                         .status(Status.ACTIVE)
                         .dateOfBirth(LocalDate.parse("2000-01-01"))
-//                                                .roles(roles)
+                        //                                                .roles(roles)
                         .build();
                 userRepository.save(user);
                 log.warn("Admin user created with username: admin and password: 123456");

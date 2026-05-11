@@ -22,11 +22,14 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
-//    unique = true để đảm bảo rằng không có hai người dùng nào có cùng tên đăng nhập,
-//    columnDefinition = "VARCHAR(255) COLLATE utf8mb4_unicode_ci" được sử dụng để chỉ định kiểu dữ liệu và collation cho cột username trong cơ sở dữ liệu, giúp hỗ trợ các ký tự Unicode một cách chính xác.
-//    Nói một cách đơn giản, điều này đảm bảo rằng mỗi người dùng có một tên đăng nhập duy nhất và không thể để trống, đồng thời hỗ trợ các ký tự đặc biệt và ngôn ngữ khác nhau trong tên đăng nhập.
+    //    unique = true để đảm bảo rằng không có hai người dùng nào có cùng tên đăng nhập,
+    //    columnDefinition = "VARCHAR(255) COLLATE utf8mb4_unicode_ci" được sử dụng để chỉ định kiểu dữ liệu và
+    // collation cho cột username trong cơ sở dữ liệu, giúp hỗ trợ các ký tự Unicode một cách chính xác.
+    //    Nói một cách đơn giản, điều này đảm bảo rằng mỗi người dùng có một tên đăng nhập duy nhất và không thể để
+    // trống, đồng thời hỗ trợ các ký tự đặc biệt và ngôn ngữ khác nhau trong tên đăng nhập.
     @Column(name = "username", unique = true, nullable = false)
     String username;
+
     String password;
     String fullName;
     String email;
