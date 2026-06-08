@@ -12,9 +12,8 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserProfileResponse {
     String id;
+    String userId;
     String fullName;
-    String email;
-    //    @DobConstraint(min = 18, message = "INVALID_DOB")
     LocalDate dateOfBirth;
     String city;
 }
