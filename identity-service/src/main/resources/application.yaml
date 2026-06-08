@@ -3,7 +3,7 @@ spring:
     name: identity-service
 
   datasource:
-    url: ${POSTGRES_URL:jdbc:postgresql://postgres-test:5432/identity-service}
+    url: ${POSTGRES_URL:jdbc:postgresql://localhost:5432/identity-service}
     username: ${POSTGRES_USER:postgres}
     password: ${POSTGRES_PASSWORD:123}
     driverClassName: "org.postgresql.Driver"
@@ -36,3 +36,7 @@ jwt:
   signer-key: "dbb7962ca1a69376e6ba22aac28b3b7c73e58876b1588ebe227bdc7d405f0414"
   valid-duration: 10 # in minutes
   refreshable-duration: 1144 # in minutes (24 hours)
+
+app:
+  server:
+    url: http://localhost:8882/api/v1/profiles

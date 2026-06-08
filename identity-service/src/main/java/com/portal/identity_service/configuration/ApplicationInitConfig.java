@@ -40,11 +40,11 @@ public class ApplicationInitConfig {
                 User user = User.builder()
                         .username("admin")
                         .password(passwordEncoder.encode("123456")) // Mật khẩu đã được mã hóa (ví dụ: "admin123")
-                        .fullName("Admin")
+//                        .fullName("Admin")
                         .email("admin@gmail.com")
                         .phoneNumber("0123456789")
                         .status(Status.ACTIVE)
-                        .dateOfBirth(LocalDate.parse("2000-01-01"))
+//                        .dateOfBirth(LocalDate.parse("2000-01-01"))
 //                                                .roles(roles)
                         .build();
                 userRepository.save(user);

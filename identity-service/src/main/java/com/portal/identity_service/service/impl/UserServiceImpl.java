@@ -4,17 +4,22 @@ import java.util.HashSet;
 import java.util.List;
 
 import com.portal.identity_service.constant.PredefinedRole;
+import com.portal.identity_service.dto.request.ProfileCreateRequest;
 import com.portal.identity_service.dto.request.UserCreateRequest;
 import com.portal.identity_service.dto.request.UserUpdateRequest;
+import com.portal.identity_service.dto.response.UserProfileResponse;
 import com.portal.identity_service.dto.response.UserResponse;
 import com.portal.identity_service.entity.Role;
 import com.portal.identity_service.entity.User;
 
 import com.portal.identity_service.excetion.*;
+import com.portal.identity_service.mapper.ProfileMapper;
 import com.portal.identity_service.mapper.UserMapper;
 import com.portal.identity_service.repository.RoleRepository;
 import com.portal.identity_service.repository.UserRepository;
+import com.portal.identity_service.repository.httpClient.ProfileClient;
 import com.portal.identity_service.service.UserService;
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -35,25 +40,50 @@ public class UserServiceImpl implements UserService {
     RoleRepository roleRepository;
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
+    ProfileClient profileClient;
+    ProfileMapper profileMapper;
 
+    @Transactional
     @Override
     public UserResponse createUser(UserCreateRequest request) {
+
         log.info("Create username = {}", request.getUsername());
 
         User user = userMapper.toUser(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         HashSet<Role> roles = new HashSet<>();
-        roleRepository.findById(PredefinedRole.USER_ROLE).ifPresent(roles::add);
+        roleRepository.findById(PredefinedRole.USER_ROLE)
+                .ifPresent(roles::add);
 
         user.setRoles(roles);
 
         try {
             user = userRepository.save(user);
         } catch (DataIntegrityViolationException e) {
-            log.error("Error creating user: {}", e.getMessage());
             throw new AppException(ErrorCode.USER_EXISTED);
         }
+
+        ProfileCreateRequest profileRequest =
+                profileMapper.toProfileCreateRequest(request);
+
+        profileRequest.setUserId(String.valueOf(user.getId()));
+
+        try {
+            UserProfileResponse profileResponse =
+                    profileClient.createProfile(profileRequest);
+
+            log.info("Profile created: {}", profileResponse);
+
+        } catch (Exception e) {
+
+            log.error("Create profile failed", e);
+
+            throw new RuntimeException(
+                    "User created but profile creation failed"
+            );
+        }
+
         return userMapper.toUserResponse(user);
     }
 
@@ -76,11 +106,30 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse getMyProfile() {
-        var context = SecurityContextHolder.getContext();
-        String name = context.getAuthentication().getName();
 
-        User user = userRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-        return userMapper.toUserResponse(user);
+        var context = SecurityContextHolder.getContext();
+        String username = context.getAuthentication().getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() ->
+                        new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        UserResponse response =
+                userMapper.toUserResponse(user);
+
+        try {
+            UserProfileResponse profile =
+                    profileClient.getProfile(
+                            String.valueOf(user.getId()));
+
+            response.setFullName(profile.getFullName());
+            response.setDateOfBirth(profile.getDateOfBirth());
+
+        } catch (Exception e) {
+            log.error("Cannot get profile", e);
+        }
+
+        return response;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -94,9 +143,19 @@ public class UserServiceImpl implements UserService {
     @PostAuthorize("returnObject.username == authentication.name")
     @Override
     public UserResponse getUserById(Long id) {
-        log.warn("in method get user by id = {}", id);
-        return userMapper.toUserResponse(
-                userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        UserResponse response = userMapper.toUserResponse(user);
+
+        UserProfileResponse profile =
+                profileClient.getProfile(String.valueOf(id));
+
+        response.setFullName(profile.getFullName());
+        response.setDateOfBirth(profile.getDateOfBirth());
+
+        return response;
     }
 
     private User getUserEntityById(Long id) {
