@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: profile-service
+
+  neo4j:
+    uri: bolt://localhost:7687
+    authentication:
+      username: neo4j
+      password: 12345678z
+
+  main:
+    banner-mode: off
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+server:
+  port: 8882
+
+logging:
+  level:
+#    root: warn
+    org.springframework.security: INFO
