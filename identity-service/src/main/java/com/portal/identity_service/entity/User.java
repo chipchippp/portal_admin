@@ -1,6 +1,5 @@
 package com.portal.identity_service.entity;
 
-import java.time.LocalDate;
 import java.util.Set;
 
 import com.portal.identity_service.enums.Gender;
@@ -28,7 +27,6 @@ public class User {
     @Column(name = "username", unique = true, nullable = false)
     String username;
     String password;
-    String fullName;
     String email;
     String phoneNumber;
 
@@ -37,8 +35,6 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     Status status;
-
-    LocalDate dateOfBirth;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
